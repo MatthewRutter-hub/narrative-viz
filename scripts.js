@@ -57,4 +57,15 @@ document.addEventListener('DOMContentLoaded', () => {
     svg.append('g')
         .attr('class', 'y-axis')
         .call(d3.axisLeft(y));
+
+    async function init() {
+        console.log('init called');
+        const data = await d3.csv('cars2017.csv');
+        d3.select('body')
+            .selectAll('p')
+            .data(data)
+            .enter()
+            .append('p')
+            .html(function(d,i) {return 'item ' + d.item + 'is ' + d.number + '.'; });
+    }
 });
