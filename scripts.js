@@ -45,6 +45,7 @@ async function init() {
         svg.append("g")
             .attr("transform", "translate(50,250)")
             .call(xAxis);
+
     } catch (error) {
         console.error('Error loading data:', error);
     }
