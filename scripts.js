@@ -50,5 +50,3 @@ async function init() {
         console.error('Error loading data:', error);
     }
 }
-
-//document.addEventListener('DOMContentLoaded', init);
