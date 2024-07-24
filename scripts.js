@@ -8,16 +8,17 @@ async function init() {
         // Make scatterplot
         var svg = d3.select("svg"),
             margin = 50,
-            width = svg.attr("width") + 2 * margin,
-            height = svg.attr("height") + 2 * margin;
-    
+            width = svg.attr("width") - 2 * margin,
+            height = svg.attr("height") - 2 * margin;   
+
+        
         var x = d3.scaleLog()
                   .domain([10, 150])
-                  .range([0, 200]);
+                  .range([0, width]);
     
         var y = d3.scaleLog()
                   .domain([10, 150])
-                  .range([200, 0]);
+                  .range([height, 0]);
     
         var g = svg.append("g")
                    .attr("transform", "translate(" + margin + "," + margin + ")");
@@ -41,9 +42,9 @@ async function init() {
         svg.append("g")
             .attr("transform", "translate(50,50)")
             .call(yAxis);
-        
+        var h = height+50
         svg.append("g")
-            .attr("transform", "translate(50,250)")
+            .attr("transform", "translate(50," + h + ")")
             .call(xAxis);
 
     } catch (error) {
