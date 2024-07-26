@@ -4,19 +4,23 @@ async function init() {
         // Load the CSV data
         const data = await d3.csv('https://flunky.github.io/cars2017.csv');
         console.log('Data loaded:', data);
-        originalData = data; // Store the original data
+        originalData = data;
+        fuel = false;
 
         // Event listeners for scene buttons
         document.getElementById('toScene1').addEventListener('click', () => {
             renderScene1(data);
+            fuel = false;
         });
         document.getElementById('toScene2').addEventListener('click', () => {
             renderScene2(data);
+            fuel = true;
         });
 
         // Event listeners for cylinder filter buttons
         document.getElementById('cylAll').addEventListener('click', () => {
-            renderScatterPlot(data, true);
+            renderScatterPlot(data, fuel);
+            d3.selectAll(".annotation").style("display", "block");
         });
         document.getElementById('cyl0').addEventListener('click', () => {
             filterByCylinders(0);
@@ -30,8 +34,6 @@ async function init() {
         document.getElementById('cyl8').addEventListener('click', () => {
             filterByCylinders(8);
         });
-
-
 
         // Initialize with Scene 1
         renderScene1(data);
@@ -51,7 +53,7 @@ function renderScene2(data) {
 
 function renderScatterPlot(data, colorByFuel) {
     var svg = d3.select("svg");
-    svg.selectAll("*").remove(); // Clear the SVG content
+    svg.selectAll("*").remove();
 
     var margin = 100,
         width = svg.attr("width") - 2 * margin,
@@ -82,7 +84,9 @@ function renderScatterPlot(data, colorByFuel) {
         .attr("cx", d => x(d.AverageCityMPG))
         .attr("cy", d => y(d.AverageHighwayMPG))
         .attr("r", d => 5 + (+d.EngineCylinders)/1.4)
-        .attr("fill", d => colorByFuel ? colorScale(d.Fuel) : "black")
+        .attr("fill", d => colorByFuel ? colorScale(d.Fuel) : "grey")
+        .attr("stroke", "black")
+        .attr("stroke-width", 1)
         .on("mouseover", function(event, d) {
             tooltip.transition()
                    .duration(200)
@@ -92,7 +96,10 @@ function renderScatterPlot(data, colorByFuel) {
                    .style("top", (event.pageY - 28) + "px");
             d3.selectAll("circle")
                    .filter(cd => cd.Make === d.Make)
-                   .classed("highlighted", true);       
+                   .classed("highlighted", true)  
+                   .each(function() {
+                        this.parentNode.appendChild(this);
+                   });     
         })
         .on("mouseout", function(d) {
             tooltip.transition()
@@ -111,7 +118,7 @@ function renderScatterPlot(data, colorByFuel) {
     var yAxis = d3.axisLeft(y)
                   .tickValues([10, 20, 50, 100])
                   .tickFormat(d3.format("~s"));
-
+            
     g.append("g")
         .attr("transform", "translate(0," + height + ")")
         .call(xAxis)
@@ -122,7 +129,6 @@ function renderScatterPlot(data, colorByFuel) {
         .attr("stroke", "black")
         .text("Average City MPG");
     
-    // Add the Y Axis
     g.append("g")
         .call(yAxis)
       .append("text")
@@ -133,11 +139,41 @@ function renderScatterPlot(data, colorByFuel) {
         .attr("text-anchor", "middle")
         .attr("stroke", "black")
         .text("Average Highway MPG");
+
+    addAnnotation(g, x, y);
 }
 
 function filterByCylinders(cylinders) {
     const filteredData = originalData.filter(d => +d.EngineCylinders === cylinders);
-    renderScatterPlot(filteredData, true);
+    renderScatterPlot(filteredData, fuel);
+    d3.selectAll(".annotation").style("display", "none");
+}
+
+function addAnnotation(g, xScale, yScale) {
+    const annotationData = {
+        AverageCityMPG: 36,
+        AverageHighwayMPG: 33,
+        text: "See which cars have the same make as this"
+    };
+    const annotation = g.append("g")
+        .attr("class", "annotation")
+        .style("display", "block");
+
+    annotation.append("line")
+     .attr("x1", xScale(annotationData.AverageCityMPG) + 3)
+     .attr("y1", yScale(annotationData.AverageHighwayMPG) + 3)
+     .attr("x2", xScale(annotationData.AverageCityMPG) + 50)
+     .attr("y2", yScale(annotationData.AverageHighwayMPG) + 50)
+     .attr("stroke", "black")
+     .attr("stroke-width", 1);
+
+    annotation.append("text")
+     .attr("x", xScale(annotationData.AverageCityMPG) + 55)
+     .attr("y", yScale(annotationData.AverageHighwayMPG) + 58)
+     .attr("text-anchor", "start")
+     .attr("font-size", "12px")
+     .attr("fill", "black")
+     .text(annotationData.text);
 }
 
 // Initialize the visualization
