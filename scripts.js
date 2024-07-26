@@ -20,10 +20,11 @@ async function init() {
         // Event listeners for cylinder filter buttons
         document.getElementById('cylAll').addEventListener('click', () => {
             renderScatterPlot(data, fuel);
-            d3.selectAll(".annotation").style("display", "block");
+            d3.selectAll(".annotation0").style("display", "block");
         });
         document.getElementById('cyl0').addEventListener('click', () => {
             filterByCylinders(0);
+            d3.selectAll(".annotation2").style("display", "block");
         });
         document.getElementById('cyl4').addEventListener('click', () => {
             filterByCylinders(4);
@@ -33,6 +34,7 @@ async function init() {
         });
         document.getElementById('cyl8').addEventListener('click', () => {
             filterByCylinders(8);
+            d3.selectAll(".annotation1").style("display", "block");
         });
 
         // Initialize with Scene 1
@@ -140,23 +142,27 @@ function renderScatterPlot(data, colorByFuel) {
         .attr("stroke", "black")
         .text("Average Highway MPG");
 
-    addAnnotation(g, x, y);
+    addAnnotation(g, x, y, 0, 36, 33, "See which cars have the same make as this");
+    addAnnotation(g, x, y, 1, 13, 18, "Efficency seems to correlate with cylinders, having more gives you a less efficent car");
+    d3.selectAll(".annotation1").style("display", "none");
+    addAnnotation(g, x, y, 2, 100, 92, "Outliers being electric");
+    d3.selectAll(".annotation2").style("display", "none");
 }
 
 function filterByCylinders(cylinders) {
     const filteredData = originalData.filter(d => +d.EngineCylinders === cylinders);
     renderScatterPlot(filteredData, fuel);
-    d3.selectAll(".annotation").style("display", "none");
+    d3.selectAll(".annotation0").style("display", "none");
 }
 
-function addAnnotation(g, xScale, yScale) {
+function addAnnotation(g, xScale, yScale, num, x, y, label) {
     const annotationData = {
-        AverageCityMPG: 36,
-        AverageHighwayMPG: 33,
-        text: "See which cars have the same make as this"
+        AverageCityMPG: x,
+        AverageHighwayMPG: y,
+        text: label
     };
     const annotation = g.append("g")
-        .attr("class", "annotation")
+        .attr("class", "annotation" + num)
         .style("display", "block");
 
     annotation.append("line")
@@ -175,6 +181,3 @@ function addAnnotation(g, xScale, yScale) {
      .attr("fill", "black")
      .text(annotationData.text);
 }
-
-// Initialize the visualization
-window.addEventListener('load', init);
