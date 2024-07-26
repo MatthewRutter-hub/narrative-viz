@@ -10,12 +10,21 @@
     <h1>Automobile Fuel Effeciency in 2017</h1>
     <svg width=1000 height=800></svg>
     <div id="legend">
-        <p>radius = # of cylinders</p>
+        <p>Radius = # of Cylinders</p>
+        <p>Blue = Gasoline</p>
+        <p>Orange = Diesel</p>
+        <p>Green = Electric</p>
     </div>
     <div>
-        <button id="toScene1">Go to Scene 1</button>
-        <button id="toScene2">Go to Scene 2</button>
-        <button id="toScene3">Go to Scene 3</button>
+        <button id="toScene1">Hide Fuel Type</button>
+        <button id="toScene2">Show Fuel Type</button>
+    </div>
+    <div>
+        <button id="cylAll">All Cylinders</button>
+        <button id="cyl8">8 Cylinders</button>
+        <button id="cyl6">6 Cylinders</button>
+        <button id="cyl4">4 Cylinders</button>
+        <button id="cyl0">0 Cylinders</button>
     </div>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="scripts.js"></script>
@@ -24,3 +33,8 @@
     </footer>
 </body>
 </html>
+<body>
+* Color based on Fuel (could be a button)
+* Hover over cylinder number to filter
+* When hovering over a car model, highlight others of the same car model
+    * Could also be a toggle</body>
